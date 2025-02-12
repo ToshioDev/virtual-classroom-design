@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
 import NotFound from "./pages/NotFound";
 import MainLayout from "./components/layouts/MainLayout";
+import Categories from "./pages/categories/Categories";
+import CourseDetail from "./pages/courses/CourseDetail";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/course/:id" element={<CourseDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </MainLayout>

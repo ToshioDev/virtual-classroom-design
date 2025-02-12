@@ -11,6 +11,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import Categories from "./pages/categories/Categories";
 import CourseDetail from "./pages/courses/CourseDetail";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Payments from "./pages/payments/Payments";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/course/:id" element={<CourseDetail />} />
+            <Route path="/payments" element={<Payments />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </MainLayout>

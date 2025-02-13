@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,28 +5,33 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
-// Datos mockeados para pruebas
-const MOCK_USER = {
-  email: "test@test.com",
-  password: "123456"
-};
+import authService from "@/services/auth.service";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (email === MOCK_USER.email && password === MOCK_USER.password) {
-      toast.success("¡Bienvenido al Aula Virtual!");
-      navigate("/dashboard");
-    } else {
-      toast.error("Credenciales incorrectas. Usa test@test.com / 123456");
+  
+    try {
+      await authService.login("/user/login", { email, password });
+
+      const token = authService.getToken();
+      const user = authService.getUser();
+  
+      if (token && user) {
+        toast.success("¡Bienvenido al Aula Virtual!");
+        navigate("/dashboard");
+      } else {
+        toast.error("Error al obtener los datos del usuario.");
+      }
+    } catch (error) {
+      toast.error("Credenciales incorrectas. Intenta de nuevo.");
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -37,11 +41,6 @@ export default function Login() {
             <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
             <CardDescription>
               Ingresa tus credenciales para acceder a tu cuenta
-              <div className="mt-2 text-sm text-muted-foreground">
-                <strong>Cuenta de prueba:</strong><br />
-                Email: test@test.com<br />
-                Contraseña: 123456
-              </div>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

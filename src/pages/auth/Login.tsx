@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import authService from "@/services/auth.service";
+import { authService } from "@/services/auth.service";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -23,7 +23,7 @@ export default function Login() {
     e.preventDefault();
   
     try {
-      await authService.login("/user/login", { email, password });
+      await authService.login(email, password);
 
       const token = authService.getToken();
       const user = authService.getUser();

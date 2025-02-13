@@ -6,17 +6,12 @@ import NavbarMobile from "@/components/NavbarMobile";
 import TopNavbarMobile from "@/components/TopNavbarMobile";
 import { Toaster as Sonner } from "sonner";
 import Spinner from "@/components/ui/Spinner";
-
-const isAuthenticated = () => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const isAuth = localStorage.getItem("isAuthenticated") === "true";
-  return (token !== null && token !== undefined && token !== "") || isAuth;
-};
+import { authService } from "@/services/auth.service";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const showNavbar = isAuthenticated();
+  const showNavbar = authService.isAuthenticated();
 
   useEffect(() => {
     const handleResize = () => {

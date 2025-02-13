@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { env } from "../environment/config"; 
-import { LoginResponse } from "../interfaces/user.interface"; 
+import { env } from "@/environment/config";
+import { LoginResponse, User } from "@/interfaces/user.interface";
 
 class AuthService {
   private axiosInstance: AxiosInstance;
@@ -9,21 +9,36 @@ class AuthService {
     this.axiosInstance = axios.create({
       baseURL: env.API_URL,
       timeout: 5000,
+      headers: {
+        'Content-Type': 'application/json',
+      }
     });
+
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        const token = this.getToken();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
 
     this.axiosInstance.interceptors.response.use(
       response => response,
-      error => this.handleError(error)
+      this.handleError
     );
   }
 
-  async login<T = LoginResponse>(url: string, data: any): Promise<T> {
+  async login(email: string, password: string): Promise<LoginResponse> {
     try {
-      const response = await this.axiosInstance.post(url, data);
+      const response = await this.axiosInstance.post('/user/login', { email, password });
       const { token, user } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
+      this.setToken(token);
+      this.setUser(user);
       return response.data;
     } catch (error) {
       this.handleError(error);
@@ -31,36 +46,77 @@ class AuthService {
     }
   }
 
-  getToken(): string | null {
-    return localStorage.getItem("token");
+  async updateProfile(userId: string, data: Partial<User>): Promise<User> {
+    try {
+      const response = await this.axiosInstance.put(`/user/${userId}`, data);
+      const updatedUser = response.data;
+      this.setUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
   }
 
-  getUser(): { id: string; nombre: string; email: string; telefono: string; rol: string } | null {
-    const user = localStorage.getItem("user");
-    return user ? JSON.parse(user) : null;
+  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
+    try {
+      await this.axiosInstance.post(`/user/${userId}/change-password`, {
+        oldPassword,
+        newPassword
+      });
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem('token', token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  setUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
+  getUser(): User | null {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
   }
 
   isAuthenticated(): boolean {
     const token = this.getToken();
-    return token !== null;
+    const user = this.getUser();
+    return !!(token && user);
   }
 
   logout(): void {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Optional: Clear any other auth-related data
+    this.axiosInstance.defaults.headers.common['Authorization'] = '';
   }
 
-  private handleError(error: AxiosError) {
-    if (error.response) {
-      console.error('Error en la respuesta del servidor:', error.response.data);
-    } else if (error.request) {
-      console.error('No se recibió respuesta del servidor:', error.request);
-    } else {
-      console.error('Error al configurar la solicitud:', error.message);
+  private handleError(error: AxiosError): never {
+    if (error.response?.status === 401) {
+      this.logout();
+      window.location.href = '/login';
     }
-
     throw error;
+  }
+
+  // Helper method to get authenticated axios instance
+  get http(): AxiosInstance {
+    return this.axiosInstance;
   }
 }
 
-export default new AuthService();
+export const authService = new AuthService();

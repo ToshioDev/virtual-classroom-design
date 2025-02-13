@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from "axios";
 import UserAvatar from "@/components/UserAvatar";
 import { 
   UserCircleIcon, 
@@ -17,6 +16,8 @@ import {
   KeyIcon 
 } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { authService } from "@/services/auth.service";
+import { env } from "@/environment/config";
 
 const Profile = () => {
   const [user, setUser] = useState({ name: "", email: "", photoUrl: "", telefono: "", createdAt: "" });
@@ -27,12 +28,13 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-        const userId = storedUser._id;
-        const response = await axios.get(`http://localhost:3000/api/v1/user/getById/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const userData = authService.getUser();
+        if (!userData) {
+          navigate('/login');
+          return;
+        }
+
+        const response = await authService.http.get(`/user/${userData.id}`);
         setUser({
           name: response.data.nombre || "",
           email: response.data.email || "",
@@ -42,11 +44,17 @@ const Profile = () => {
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
+        navigate('/login');
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
+
+  const handleLogout = () => {
+    authService.logout();
+    navigate("/login");
+  };
 
   const handleEdit = () => {
     setIsEditing(true);

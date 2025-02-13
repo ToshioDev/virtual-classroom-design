@@ -11,15 +11,10 @@ import CourseDetail from "./pages/courses/CourseDetail";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Payments from "./pages/payments/Payments";
 import NotificationsMobile from "./pages/mobile/NotificationsMobile";
-import Profile from "./pages/profile/Profile"; // Add this import
+import Profile from "./pages/profile/Profile";
+import { authService } from "./services/auth.service";
 
 const queryClient = new QueryClient();
-
-const isAuthenticated = () => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
-  const isAuth = localStorage.getItem("isAuthenticated") === "true";
-  return (token !== null && token !== undefined && token !== "") || isAuth;
-};
 
 const App = () => {
   return (
@@ -28,14 +23,14 @@ const App = () => {
         <BrowserRouter>
           <MainLayout>
             <Routes>
-              <Route path="/" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Index />} />
-              <Route path="/login" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} />
-              <Route path="/dashboard" element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="/topics" element={isAuthenticated() ? <Topics /> : <Navigate to="/login" />} />
-              <Route path="/course/:id" element={isAuthenticated() ? <CourseDetail /> : <Navigate to="/login" />} />
-              <Route path="/payments" element={isAuthenticated() ? <Payments /> : <Navigate to="/login" />} />
-              <Route path="/profile" element={isAuthenticated() ? <Profile /> : <Navigate to="/login" />} /> {/* Add this route */}
-              <Route path="/mobile/notifications" element={isAuthenticated() ? <NotificationsMobile /> : <Navigate to="/login" />} />
+              <Route path="/" element={authService.isAuthenticated() ? <Navigate to="/dashboard" /> : <Index />} />
+              <Route path="/login" element={authService.isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} />
+              <Route path="/dashboard" element={authService.isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} />
+              <Route path="/topics" element={authService.isAuthenticated() ? <Topics /> : <Navigate to="/login" />} />
+              <Route path="/course/:id" element={authService.isAuthenticated() ? <CourseDetail /> : <Navigate to="/login" />} />
+              <Route path="/payments" element={authService.isAuthenticated() ? <Payments /> : <Navigate to="/login" />} />
+              <Route path="/profile" element={authService.isAuthenticated() ? <Profile /> : <Navigate to="/login" />} />
+              <Route path="/mobile/notifications" element={authService.isAuthenticated() ? <NotificationsMobile /> : <Navigate to="/login" />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </MainLayout>

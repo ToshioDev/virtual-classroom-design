@@ -143,7 +143,7 @@ export default function Dashboard() {
         </div>
 
         {/* Sidebar de boletines */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 pb-16 lg:pb-0"> {/* Add padding-bottom for mobile */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">

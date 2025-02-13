@@ -35,7 +35,7 @@ const MOCK_CATEGORIES = [
   }
 ];
 
-export default function Categories() {
+export default function Topics() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -78,3 +78,12 @@
     transform: translateY(0);
   }
 }
+/* Para navegadores modernos */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Para Firefox */
+html {
+  scrollbar-width: none;
+}

@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ModeToggle } from "@/components/mode-toggle";
 
 const TopNavbarMobile = () => {
   const [hasNotifications, setHasNotifications] = useState(false);
+  const [user, setUser] = useState(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     // Mock check for notifications
@@ -13,6 +15,10 @@ const TopNavbarMobile = () => {
       { id: 2, read: true },
     ];
     setHasNotifications(notifications.some(notification => !notification.read));
+
+    // Fetch user data from localStorage
+    const userData = JSON.parse(localStorage.getItem("user"));
+    setUser(userData);
   }, []);
 
   return (
@@ -27,6 +33,18 @@ const TopNavbarMobile = () => {
               <Bell className="w-6 h-6" />
               {hasNotifications && (
                 <span className="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+              )}
+            </Link>
+            <Link to="/profile" className="flex items-center justify-center text-gray-900 dark:text-white hover:text-primary-500 transition duration-300 ease-in-out px-4">
+              {user && user.foto_perfil && !imageError ? (
+                <img 
+                  src={user.foto_perfil} 
+                  alt="Profile" 
+                  className="w-6 h-6 rounded-full" 
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <User className="w-6 h-6" />
               )}
             </Link>
             <ModeToggle />

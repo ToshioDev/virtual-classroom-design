@@ -45,14 +45,15 @@ const Notifications = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <button className="relative">
-          <Bell className="w-6 h-6 text-gray-900 dark:text-white" />
-          {notifications.some(notification => !notification.read) && (
-            <span className="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
-          )}
-        </button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
+  <span className="relative cursor-pointer">
+    <Bell className="w-6 h-6 text-gray-900 dark:text-white" />
+    {notifications.some(notification => !notification.read) && (
+      <span className="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+    )}
+  </span>
+</DropdownMenuTrigger>
+
       <DropdownMenuContent className="bg-white dark:bg-gray-800 w-80">
         <DropdownMenuLabel>
           <div className="flex justify-between items-center">

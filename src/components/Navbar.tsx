@@ -4,6 +4,7 @@ import Profile from "@/components/Profile";
 import Bulletins from "@/components/Bulletins";
 import Notifications from "@/components/Notifications";
 import { ModeToggle } from "@/components/mode-toggle";
+import { HomeIcon, BookOpenIcon, CreditCardIcon } from "@heroicons/react/24/outline"; // Add this import
 
 const Navbar = () => {
   return (
@@ -16,19 +17,24 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="flex-1 flex items-center justify-center space-x-4">
-          <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
-              <Link to="/dashboard">Inicio</Link>
+            <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
+              <Link to="/dashboard">
+                <HomeIcon className="h-5 w-5 mr-2" /> Inicio
+              </Link>
             </Button>
             <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
-              <Link to="/categories">Materias</Link>
+              <Link to="/topics">
+                <BookOpenIcon className="h-5 w-5 mr-2" /> Materias
+              </Link>
             </Button>
             <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
-              <Link to="/payments">Pagos</Link>
+              <Link to="/payments">
+                <CreditCardIcon className="h-5 w-5 mr-2" /> Pagos
+              </Link>
             </Button>
           </div>
           <div className="flex items-center space-x-4 z-20">
             <Notifications />
-
             <Profile />
             <ModeToggle />
           </div>

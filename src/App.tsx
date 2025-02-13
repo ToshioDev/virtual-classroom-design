@@ -6,12 +6,12 @@ import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
 import NotFound from "./pages/NotFound";
 import MainLayout from "./components/layouts/MainLayout";
-import Categories from "./pages/categories/Categories";
+import Topics from "./pages/categories/Categories";
 import CourseDetail from "./pages/courses/CourseDetail";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Payments from "./pages/payments/Payments";
 import NotificationsMobile from "./pages/mobile/NotificationsMobile";
-import ProfileMobile from "./pages/mobile/ProfileMobile";
+import Profile from "./pages/profile/Profile"; // Add this import
 
 const queryClient = new QueryClient();
 
@@ -31,11 +31,11 @@ const App = () => {
               <Route path="/" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Index />} />
               <Route path="/login" element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} />
               <Route path="/dashboard" element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="/categories" element={isAuthenticated() ? <Categories /> : <Navigate to="/login" />} />
+              <Route path="/topics" element={isAuthenticated() ? <Topics /> : <Navigate to="/login" />} />
               <Route path="/course/:id" element={isAuthenticated() ? <CourseDetail /> : <Navigate to="/login" />} />
               <Route path="/payments" element={isAuthenticated() ? <Payments /> : <Navigate to="/login" />} />
+              <Route path="/profile" element={isAuthenticated() ? <Profile /> : <Navigate to="/login" />} /> {/* Add this route */}
               <Route path="/mobile/notifications" element={isAuthenticated() ? <NotificationsMobile /> : <Navigate to="/login" />} />
-              <Route path="/mobile/profile" element={isAuthenticated() ? <ProfileMobile /> : <Navigate to="/login" />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </MainLayout>

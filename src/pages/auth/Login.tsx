@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,13 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem("showWelcomeToast") === "true") {
+      toast.success("¡Bienvenido al Aula Virtual!");
+      localStorage.removeItem("showWelcomeToast");
+    }
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
   
@@ -22,16 +29,21 @@ export default function Login() {
       const user = authService.getUser();
   
       if (token && user) {
+        localStorage.setItem("isAuthenticated", "true");
         toast.success("¡Bienvenido al Aula Virtual!");
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+          window.location.reload();
+        }, 3000); // 3 seconds delay
       } else {
         toast.error("Error al obtener los datos del usuario.");
+        navigate("/login");
       }
     } catch (error) {
       toast.error("Credenciales incorrectas. Intenta de nuevo.");
+      navigate("/login");
     }
   };
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

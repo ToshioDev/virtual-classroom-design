@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Skeleton from "@/components/ui/skeleton";
 
 // Datos mockeados para las categorías
 const MOCK_CATEGORIES = [
@@ -36,19 +36,33 @@ const MOCK_CATEGORIES = [
 ];
 
 export default function Categories() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Simulate loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Explora nuestras categorías</h1>
+      <h1 className="text-3xl font-bold mb-8">Explora nuestras materias</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {MOCK_CATEGORIES.map((category) => (
           <Link to={`/category/${category.id}`} key={category.id}>
             <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
               <div className="aspect-video w-full overflow-hidden">
-                <img 
-                  src={category.image} 
-                  alt={category.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
+                {loading ? (
+                  <Skeleton className="w-full h-full" />
+                ) : (
+                  <img 
+                    src={category.image} 
+                    alt={category.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                )}
               </div>
               <CardHeader>
                 <CardTitle>{category.name}</CardTitle>

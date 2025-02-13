@@ -1,7 +1,10 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Bell, BookOpen, Clock, AlertCircle } from "lucide-react";
+import { Bell, BookOpen, Clock, AlertCircle, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import Bulletins from "@/components/Bulletins";
+import Skeleton from "@/components/ui/skeleton";
 
 // Datos mockeados para los cursos comprados
 const MOCK_PURCHASED_COURSES = [
@@ -31,29 +34,46 @@ const MOCK_PURCHASED_COURSES = [
   }
 ];
 
-// Datos mockeados para las notificaciones
-const MOCK_NOTIFICATIONS = [
+// Datos mockeados para los boletines
+const MOCK_BULLETINS = [
   {
     id: 1,
-    type: "renewal",
-    message: "Tu curso de JavaScript Moderno vence en 3 días",
+    title: "Nuevo Curso de React",
+    content: "Nos complace anunciar el lanzamiento de nuestro nuevo curso de React. ¡Inscríbete ahora!",
     date: "2024-03-29"
   },
   {
     id: 2,
-    type: "achievement",
-    message: "¡Felicitaciones! Has completado el 75% de Diseño UX/UI Avanzado",
+    title: "Actualización de la Plataforma",
+    content: "Hemos realizado una actualización en nuestra plataforma para mejorar la experiencia del usuario.",
     date: "2024-03-28"
   },
   {
     id: 3,
-    type: "reminder",
-    message: "No olvides completar la tarea pendiente en Desarrollo Web Full Stack",
+    title: "Recordatorio de Pago",
+    content: "Recuerda que el próximo pago de tu suscripción vence el 1 de abril.",
     date: "2024-03-27"
   }
 ];
 
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (localStorage.getItem("showWelcomeToast") === "true") {
+      toast.success("¡Bienvenido al Aula Virtual!");
+      setTimeout(() => {
+        localStorage.removeItem("showWelcomeToast");
+      }, 1000);
+    }
+
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Simulate loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Función para calcular días restantes
   const getDaysRemaining = (renewalDate: string) => {
     const today = new Date();
@@ -83,11 +103,15 @@ export default function Dashboard() {
               <Link to={`/course/${course.id}`} key={course.id}>
                 <Card className="h-full hover:shadow-lg transition-shadow duration-300">
                   <div className="aspect-video w-full overflow-hidden">
-                    <img 
-                      src={course.image} 
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
+                    {loading ? (
+                      <Skeleton className="w-full h-full" />
+                    ) : (
+                      <img 
+                        src={course.image} 
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
                   <CardHeader>
                     <CardTitle className="line-clamp-1">{course.title}</CardTitle>
@@ -118,38 +142,19 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Sidebar de notificaciones */}
+        {/* Sidebar de boletines */}
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Bell className="w-5 h-5 text-primary" />
-                <CardTitle>Notificaciones</CardTitle>
+                <CardTitle>Boletines</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {MOCK_NOTIFICATIONS.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50"
-                  >
-                    {notification.type === "renewal" && (
-                      <Clock className="w-5 h-5 text-yellow-500 flex-shrink-0" />
-                    )}
-                    {notification.type === "achievement" && (
-                      <BookOpen className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    )}
-                    {notification.type === "reminder" && (
-                      <AlertCircle className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                    )}
-                    <div>
-                      <p className="text-sm font-medium">{notification.message}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDate(notification.date)}
-                      </p>
-                    </div>
-                  </div>
+                {MOCK_BULLETINS.map((bulletin) => (
+                  <Bulletins key={bulletin.id} bulletin={bulletin} />
                 ))}
               </div>
             </CardContent>

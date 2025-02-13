@@ -17,7 +17,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { authService } from "@/services/auth.service";
-import { env } from "@/environment/config";
 
 const Profile = () => {
   const [user, setUser] = useState({ name: "", email: "", photoUrl: "", telefono: "", createdAt: "" });
@@ -34,7 +33,7 @@ const Profile = () => {
           return;
         }
 
-        const response = await authService.http.get(`/user/${userData.id}`);
+        const response = await authService.http.get(`/user/getById/${userData._id}`);
         setUser({
           name: response.data.nombre || "",
           email: response.data.email || "",
@@ -92,7 +91,7 @@ const Profile = () => {
   if (!user) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 sm:pb-0 pb-20">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* User Info Card - Presentational */}
         <Card className="md:col-span-1 h-fit">

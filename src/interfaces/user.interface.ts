@@ -5,6 +5,7 @@ export interface User {
   telefono: string;
   rol: string;
   foto_perfil?: string;
+  createdAt: Date;
 }
 
 export interface LoginResponse {

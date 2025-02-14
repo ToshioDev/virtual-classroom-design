@@ -33,13 +33,13 @@ const Profile = () => {
           return;
         }
 
-        const response = await authService.http.get(`/user/getById/${userData._id}`);
+        const response = await authService.getUserById(userData._id);
         setUser({
-          name: response.data.nombre || "",
-          email: response.data.email || "",
-          photoUrl: response.data.foto_perfil || "",
-          telefono: response.data.telefono || "",
-          createdAt: new Date(response.data.createdAt).toLocaleDateString() || ""
+          name: response.nombre || "",
+          email: response.email || "",
+          photoUrl: response.foto_perfil || "",
+          telefono: response.telefono || "",
+          createdAt: new Date(response.createdAt).toLocaleDateString() || ""
         });
       } catch (error) {
         console.error("Error fetching user data:", error);

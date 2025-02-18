@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
-import { Bell, User } from "lucide-react";
+import { Bell, User, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ModeToggle } from "@/components/mode-toggle";
+import { authService } from "@/services/auth.service";
 
 const TopNavbarMobile = () => {
   const [hasNotifications, setHasNotifications] = useState(false);
   const [user, setUser] = useState(null);
   const [imageError, setImageError] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Mock check for notifications
@@ -19,6 +21,10 @@ const TopNavbarMobile = () => {
     // Fetch user data from localStorage
     const userData = JSON.parse(localStorage.getItem("user"));
     setUser(userData);
+
+    // Check if user is admin
+    const currentUser = authService.getUser();
+    setIsAdmin(currentUser?.rol === 'admin');
   }, []);
 
   return (
@@ -29,6 +35,11 @@ const TopNavbarMobile = () => {
             NOVA
           </Link>
           <div className="flex items-center space-x-4">
+            {isAdmin && (
+              <Link to="/gestion" className="flex items-center justify-center text-gray-900 dark:text-white hover:text-primary-500 transition duration-300 ease-in-out">
+                <Settings className="w-6 h-6" />
+              </Link>
+            )}
             <Link to="/mobile/notifications" className="relative flex items-center justify-center text-gray-900 dark:text-white hover:text-primary-500 transition duration-300 ease-in-out">
               <Bell className="w-6 h-6" />
               {hasNotifications && (

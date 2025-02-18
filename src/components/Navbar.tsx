@@ -4,9 +4,19 @@ import Profile from "@/components/Profile";
 import Bulletins from "@/components/Bulletins";
 import Notifications from "@/components/Notifications";
 import { ModeToggle } from "@/components/mode-toggle";
-import { HomeIcon, BookOpenIcon, CreditCardIcon } from "@heroicons/react/24/outline"; // Add this import
+import { HomeIcon, BookOpenIcon, CreditCardIcon } from "@heroicons/react/24/outline";
+import { Settings } from "lucide-react";
+import { useEffect, useState } from "react";
+import { authService } from "@/services/auth.service";
 
 const Navbar = () => {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const user = authService.getUser();
+    setIsAdmin(user?.rol === 'admin');
+  }, []);
+
   return (
     <nav className="bg-white dark:bg-gray-800 shadow w-full fixed top-0 left-0 z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -32,6 +42,13 @@ const Navbar = () => {
                 <CreditCardIcon className="h-5 w-5 mr-2" /> Pagos
               </Link>
             </Button>
+            {isAdmin && (
+              <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Link to="/gestion">
+                  <Settings className="h-5 w-5 mr-2" /> Gestión
+                </Link>
+              </Button>
+            )}
           </div>
           <div className="flex items-center space-x-4 z-20">
             <Notifications />

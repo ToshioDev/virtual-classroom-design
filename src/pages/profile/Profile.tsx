@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { authService } from "@/services/auth.service";
 
 const Profile = () => {
-  const [user, setUser] = useState({ name: "", email: "", photoUrl: "", telefono: "", createdAt: "" });
+  const [user, setUser] = useState({ name: "", novaId: "", email: "", photoUrl: "", telefono: "", createdAt: "" });
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", telefono: "" });
   const navigate = useNavigate();
@@ -36,6 +36,7 @@ const Profile = () => {
         const response = await authService.getUserById(userData._id);
         setUser({
           name: response.nombre || "",
+          novaId: response.novaId || "",
           email: response.email || "",
           photoUrl: response.foto_perfil || "",
           telefono: response.telefono || "",
@@ -101,12 +102,12 @@ const Profile = () => {
               Revisa tus datos de usuario registrados en la plataforma.
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-4">
+          <CardContent className="pt-6 px-4">
+            <div className="flex items-center gap-3">
               <UserAvatar 
                 name={user.name} 
                 photoUrl={user.photoUrl} 
-                size={80} 
+                size={50} 
                 className="shadow-lg"
               />
               <div className="min-w-0">
@@ -114,6 +115,7 @@ const Profile = () => {
                   {user.name}
                 </h2>
                 <div className="mt-1 space-y-1">
+                  <span className="text-gray-600">@{user.novaId}</span>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <EnvelopeIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="truncate">{user.email}</span>

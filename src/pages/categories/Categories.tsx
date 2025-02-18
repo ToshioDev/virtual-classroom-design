@@ -2,71 +2,88 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Skeleton from "@/components/ui/skeleton";
+import { Category } from "@/interfaces/category.interface";
+import { categoryService } from "@/services/category.service";
 
-// Datos mockeados para las categorías
-const MOCK_CATEGORIES = [
-  {
-    id: 1,
-    name: "Desarrollo Web",
-    description: "Aprende las últimas tecnologías web como React, Node.js y más",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-    courseCount: 12
-  },
-  {
-    id: 2,
-    name: "Diseño UX/UI",
-    description: "Domina el arte del diseño de interfaces y experiencia de usuario",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    courseCount: 8
-  },
-  {
-    id: 3,
-    name: "Marketing Digital",
-    description: "Estrategias efectivas para el marketing en línea",
-    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-    courseCount: 6
-  },
-  {
-    id: 4,
-    name: "Data Science",
-    description: "Análisis de datos, machine learning e inteligencia artificial",
-    image: "https://images.unsplash.com/photo-1501854140801-50d01698950b",
-    courseCount: 9
-  }
-];
-
-export default function Topics() {
+export default function Categories() {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000); // Simulate loading time
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await categoryService.findAll();
+        setCategories(fetchedCategories);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError("No se pudieron cargar las materias");
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchCategories();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="container mx-auto py-8 px-4 sm:pb-0 pb-20">
+        <h1 className="text-3xl font-bold mb-8">Explora nuestras materias</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4].map((_, index) => (
+            <Card key={index} className="h-full">
+              <Skeleton className="w-full h-48" />
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (categories.length === 0) {
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <h1 className="text-3xl font-bold mb-8">Explora nuestras materias</h1>
+        <p className="text-xl text-muted-foreground">
+          No se tienen materias disponibles en este momento
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 sm:pb-0 pb-20">
       <h1 className="text-3xl font-bold mb-8">Explora nuestras materias</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {MOCK_CATEGORIES.map((category) => (
-          <Link to={`/category/${category.id}`} key={category.id}>
+        {categories.map((category) => (
+          <Link to={`/topics/${category._id}`} key={category._id}>
             <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
               <div className="aspect-video w-full overflow-hidden">
-                {loading ? (
-                  <Skeleton className="w-full h-full" />
-                ) : (
-                  <img 
-                    src={category.image} 
-                    alt={category.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                )}
+                <img 
+                  src={category.imagen_referencia} 
+                  alt={category.nombre}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardHeader>
-                <CardTitle>{category.name}</CardTitle>
-                <CardDescription>{`${category.courseCount} cursos disponibles`}</CardDescription>
+                <CardTitle>{category.nombre}</CardTitle>
+                <CardDescription>{`${category.cursosId.length} cursos disponibles`}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">{category.description}</p>

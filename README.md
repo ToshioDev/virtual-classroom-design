@@ -1,69 +1,127 @@
-# Welcome to your Lovable project
+# Academia Nova - Plataforma de Aula Virtual
 
-## Project info
+## Descripción del Proyecto
 
-**URL**: https://lovable.dev/projects/68c8c16a-a17b-49d6-8201-cf5a8b75ec9f
+Academia Nova es una plataforma educativa integral diseñada para transformar la experiencia de aprendizaje en línea. Nuestro objetivo es crear un ecosistema digital que conecte estudiantes, profesores y contenido educativo de manera intuitiva, accesible y efectiva.
 
-## How can I edit this code?
+### Características Principales
 
-There are several ways of editing your application.
+#### Para Estudiantes
+- Acceso a cursos y materiales educativos
+- Seguimiento de progreso académico
+- Sistema de calificaciones y retroalimentación
+- Comunicación directa con profesores
+- Calendario de actividades y entregas
 
-**Use Lovable**
+#### Para Profesores
+- Creación y gestión de cursos
+- Herramientas de evaluación y seguimiento
+- Comunicación instantánea con estudiantes
+- Generación de informes de desempeño
+- Integración de recursos multimedia
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/68c8c16a-a17b-49d6-8201-cf5a8b75ec9f) and start prompting.
+### Funcionalidades Clave
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **Autenticación Segura**
+   - Registro e inicio de sesión
+   - Gestión de perfiles de usuario
+   - Roles diferenciados (estudiante, profesor, administrador)
 
-**Use your preferred IDE**
+2. **Gestión de Cursos**
+   - Catálogo de cursos
+   - Inscripción en cursos
+   - Módulos y lecciones interactivas
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. **Sistema de Evaluación**
+   - Exámenes en línea
+   - Calificaciones automáticas
+   - Retroalimentación personalizada
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+4. **Comunicación**
+   - Chat integrado
+   - Foros de discusión
+   - Notificaciones en tiempo real
 
-Follow these steps:
+5. **Experiencia de Usuario**
+   - Diseño responsivo
+   - Tema claro/oscuro
+   - Interfaz intuitiva y accesible
+
+## Configuración del Proyecto
+
+### Requisitos Previos
+- Node.js (versión 18 o superior)
+- npm (gestor de paquetes)
+
+### Instalación
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clonar el repositorio
+git clone https://github.com/ToshioDev/virtual-classroom-design.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navegar al directorio del proyecto
+cd virtual-classroom-design
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Instalar dependencias
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Arquitectura Frontend
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Tecnologías Principales
+- **React 18.3.1**: Biblioteca de interfaz de usuario
+- **TypeScript**: Tipado estático
+- **Vite**: Herramienta de construcción
+- **Tailwind CSS**: Estilos utility-first
+- **shadcn-ui**: Biblioteca de componentes accesibles
 
-**Use GitHub Codespaces**
+### Estructura del Proyecto
+```
+src/
+├── components/           # Componentes reutilizables
+│   ├── layouts/          # Diseños de página
+│   ├── ui/               # Componentes de interfaz
+├── pages/                # Componentes de página
+│   ├── auth/             # Páginas de autenticación
+│   ├── cursos/           # Páginas de gestión de cursos
+│   └── perfil/           # Páginas de perfil
+├── servicios/            # Capa de servicios y API
+├── App.tsx               # Componente principal
+└── main.tsx              # Punto de entrada
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Mejoras Futuras
 
-## What technologies are used for this project?
+### Mejoras de Frontend
+- [ ] Implementar manejo de errores comprehensivo
+- [ ] Añadir validación de formularios avanzada
+- [ ] Crear bibliotecas de componentes más granulares
+- [ ] Optimizar rendimiento con React.memo
+- [ ] Mejorar características de accesibilidad
 
-This project is built with .
+### Experiencia de Usuario
+- [ ] Desarrollar transiciones de UI más interactivas
+- [ ] Diseño responsive para más tamaños de pantalla
+- [ ] Implementar búsqueda y filtrado avanzados
+- [ ] Añadir soporte de internacionalización
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Mejoras Técnicas
+- [ ] Configurar pruebas unitarias e de integración
+- [ ] Implementar pruebas end-to-end con Cypress
+- [ ] Mejorar gestión de estado
+- [ ] Aumentar documentación del código
 
-## How can I deploy this project?
+### Seguridad
+- [ ] Fortalecer flujos de autenticación
+- [ ] Implementar límites de tasa
+- [ ] Mejorar sanitización de inputs
+- [ ] Añadir logging de errores avanzado
 
-Simply open [Lovable](https://lovable.dev/projects/68c8c16a-a17b-49d6-8201-cf5a8b75ec9f) and click on Share -> Publish.
+## Contribución
+Estamos abiertos a contribuciones. Por favor, lee nuestras guías de contribución antes de enviar pull requests.
 
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Licencia
+MIT

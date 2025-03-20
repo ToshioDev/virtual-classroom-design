@@ -67,9 +67,12 @@ class UserService {
   }
 
   // Get user by ID
-  async findOne(userId: string): Promise<User> {
+  async findOne(userId: string): Promise<any> {
     try {
-      const response = await this.axiosInstance.get(`/user/getById/${userId}`);
+      if (!userId || typeof userId !== 'string') {
+        throw new Error('Invalid user ID provided');
+      }
+      const response = await this.axiosInstance.get(`/user/getById/${userId.trim()}`);
       return response.data;
     } catch (error) {
       this.handleError(error);
@@ -128,6 +131,58 @@ class UserService {
         newPassword 
       });
       return response.data;
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  // Enrolar un usuario en un curso
+  async enrollInCourse(userId: string, courseId: string): Promise<User> {
+    try {
+      const user = await this.findOne(userId);
+      const enrolledCourses = [...(user.enrolledCoursesIds || []), courseId];
+      const updateData: Partial<User> = {
+        enrolledCoursesIds: enrolledCourses
+      };
+      return await this.update(userId, updateData);
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  // Desenrolar un usuario de un curso
+  async unenrollFromCourse(userId: string, courseId: string): Promise<User> {
+    try {
+      const user = await this.findOne(userId);
+      const enrolledCourses = (user.enrolledCoursesIds || []).filter(id => id !== courseId);
+      const response = await this.axiosInstance.put(`/user/update/${userId}`, {
+        enrolledCoursesIds: enrolledCourses
+      });
+      return response.data;
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  // Obtener los cursos enrolados de un usuario
+  async getEnrolledCourses(userId: string): Promise<string[]> {
+    try {
+      const user = await this.findOne(userId);
+      return user.enrolledCoursesIds || [];
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  // Verificar si un usuario está enrolado en un curso
+  async isEnrolledInCourse(userId: string, courseId: string): Promise<boolean> {
+    try {
+      const user = await this.findOne(userId);
+      return (user.enrolledCoursesIds || []).includes(courseId);
     } catch (error) {
       this.handleError(error);
       throw error;

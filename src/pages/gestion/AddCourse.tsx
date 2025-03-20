@@ -35,8 +35,19 @@ const AddCourse: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const fetchedCategories = await categoryService.findAll();
-        setCategories(fetchedCategories);
+        const response = await categoryService.findAll();
+        if (response && response.data && Array.isArray(response.data)) {
+          const categoriesData = response.data.map(item => ({
+            _id: item._id,
+            nombre: item.nombre,
+            description: item.description,
+            imagen_referencia: item.imagen_referencia,
+            cursosId: item.cursosId
+          }));
+          setCategories(categoriesData);
+        } else {
+          toast.error('Error al cargar las categorías');
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
         toast.error('No se pudieron cargar las categorías', {

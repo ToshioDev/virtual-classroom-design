@@ -4,6 +4,7 @@ import { LoginResponse, User } from "@/interfaces/user.interface";
 
 class AuthService {
   private axiosInstance: AxiosInstance;
+  private isPublicRoute: boolean = false;
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -31,6 +32,10 @@ class AuthService {
       response => response,
       this.handleError
     );
+  }
+
+  setPublicRoute(isPublic: boolean) {
+    this.isPublicRoute = isPublic;
   }
 
   async getUserById(userId: string): Promise<User> {
@@ -124,47 +129,52 @@ class AuthService {
     this.axiosInstance.defaults.headers.common['Authorization'] = '';
   }
 
+  private handleError(error: AxiosError): never {
+    if (error.response?.status === 401 && !this.isPublicRoute) {
+      this.logout();
+      if (window.location.pathname !== '/') {
+        window.location.href = '/login';
+      }
+    }
+    throw error;
+  }
+
   async validateToken(): Promise<boolean> {
     try {
       const token = this.getToken();
       const user = this.getUser();
 
-      // If no token or user, consider it invalid
       if (!token || !user) return false;
 
-      // Make a test request to a safe endpoint that requires authentication
-      const response = await this.axiosInstance.get('/user/validate-token');
+      const response = await this.axiosInstance.get('/user/validate-token/' + user._id);
       
-      // If the request is successful, the token is valid
       return response.status === 200;
     } catch (error) {
-      // If the request fails with 401, the token is invalid
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
+          this.logout();
+          if (window.location.pathname !== '/') {
+            window.location.href = '/login';
+          }
           return false;
         }
       }
       
-      // For other errors, log and consider the token potentially invalid
-      console.error('Token validation error:', error);
+      console.error('Error de validación de token:', error);
       return false;
     }
   }
 
   startTokenValidation() {
-    // Check token every 10 minutes
-    const VALIDATION_INTERVAL = 10 * 60 * 1000; // 10 minutes
-    const GRACE_PERIOD = 5 * 60 * 1000; // 5 minutes grace period
+    const VALIDATION_INTERVAL = 10 * 60 * 1000; // 10 minutos
+    const GRACE_PERIOD = 5 * 60 * 1000; // 5 minutos de gracia
     
-    // Flag to prevent multiple concurrent validations
     let isValidating = false;
     let lastValidationTime: number | null = null;
 
     const validateAndRedirect = async () => {
-      // Prevent concurrent validations
       if (isValidating) return;
 
-      // Check if enough time has passed since last validation
       const now = Date.now();
       if (lastValidationTime && now - lastValidationTime < VALIDATION_INTERVAL) return;
 
@@ -174,49 +184,30 @@ class AuthService {
 
         const isValid = await this.validateToken();
         
-        if (!isValid) {
-          // Check if we're past the grace period
-          const token = this.getToken();
-          const user = this.getUser();
-
-          if (token && user) {
-            // Token is invalid, logout and redirect
+        if (!isValid && !this.isPublicRoute) {
+          if (window.location.pathname !== '/') {
             this.logout();
-            
-            // Use window.location to force full page reload and redirect to login
             window.location.href = '/login';
           }
         }
       } catch (error) {
-        console.error('Token validation error:', error);
+        console.error('Error de validación de token:', error);
       } finally {
         isValidating = false;
       }
     };
 
-    // Initial check after a short delay to avoid immediate validation on page load
     const initialCheckTimeout = setTimeout(() => {
       validateAndRedirect();
     }, GRACE_PERIOD);
 
-    // Set up periodic validation
     const intervalId = setInterval(validateAndRedirect, VALIDATION_INTERVAL);
 
-    // Return a cleanup function to stop validation
     return () => {
       clearTimeout(initialCheckTimeout);
       clearInterval(intervalId);
     };
   }
-
-  private handleError(error: AxiosError): never {
-    if (error.response?.status === 401) {
-      this.logout();
-      window.location.href = '/login';
-    }
-    throw error;
-  }
-
 }
 
 export const authService = new AuthService();

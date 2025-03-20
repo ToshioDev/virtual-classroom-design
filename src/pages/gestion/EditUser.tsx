@@ -24,6 +24,7 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog";
 import { User } from "@/interfaces/user.interface";
+import Spinner from "@/components/ui/Spinner";
 
 const LATIN_AMERICAN_COUNTRIES = [
   { code: 'MX', name: 'México', flag: '🇲🇽', phoneCode: '+52' },
@@ -212,7 +213,11 @@ const EditUser: React.FC = () => {
   };
 
   if (isDataLoading) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
   }
 
   return (

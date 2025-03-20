@@ -118,7 +118,7 @@ const ManageUsers: React.FC = () => {
               </TableHeader>
               <TableBody>
                 {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
+                  <TableRow key={user._id}>
                     <TableCell>
                       <div className="font-medium">{user._id}</div>
                     </TableCell>

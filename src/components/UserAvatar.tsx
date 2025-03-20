@@ -19,9 +19,13 @@ const getColorFromInitial = (initial: string) => {
   return colors[index];
 };
 
-const getInitials = (name: string) => {
-  const initials = name.split(" ").map(part => part[0]).join("");
-  return initials.substring(0, 2).toUpperCase();
+const getInitials = (name: string | undefined): string => {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
 };
 
 const getAvatarSize = (size: UserAvatarProps['size']): string => {

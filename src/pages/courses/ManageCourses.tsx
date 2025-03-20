@@ -36,6 +36,7 @@ import { categoryService } from '@/services/category.service';
 import { Course } from '@/interfaces/course.interface';
 import { Category } from '@/interfaces/category.interface';
 import { toast } from 'sonner';
+import Spinner from "@/components/ui/Spinner";
 
 const ManageCourses: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -139,18 +140,9 @@ const ManageCourses: React.FC = () => {
   // Render loading state
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Cargando Cursos...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-4">
-            {[...Array(5)].map((_, index) => (
-              <div key={index} className="h-10 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="min-h-screen flex items-center justify-center">
+        <Spinner />
+      </div>
     );
   }
 

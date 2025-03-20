@@ -13,5 +13,5 @@ export interface Course {
   price: number;
   categoryId: string;
   docenteId: User[];
-  videos?: Live[];
+  videos?: string[];
 }

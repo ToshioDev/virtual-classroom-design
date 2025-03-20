@@ -37,8 +37,19 @@ const ListCategories: React.FC = () => {
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        const fetchedCategories = await categoryService.findAll();
-        setCategories(fetchedCategories);
+        const response = await categoryService.findAll();
+        if (response && response.data && Array.isArray(response.data)) {
+          const categoriesData = response.data.map(item => ({
+            _id: item._id,
+            nombre: item.nombre,
+            description: item.description,
+            imagen_referencia: item.imagen_referencia,
+            cursosId: item.cursosId
+          }));
+          setCategories(categoriesData);
+        } else {
+          throw new Error('Invalid data format received');
+        }
       } catch (error) {
         console.error('Error fetching categories:', error);
         toast.error('Error al cargar categorías', {
@@ -121,15 +132,21 @@ const ListCategories: React.FC = () => {
           No se encontraron categorías
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredCategories.map(category => (
             <Card key={category._id} className="hover:shadow-lg transition-shadow duration-300">
               {category.imagen_referencia && (
-                <div className="w-full h-48 overflow-hidden">
+                <div className="w-full h-48 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gray-200 animate-pulse" />
                   <img 
                     src={category.imagen_referencia} 
                     alt={category.nombre} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover relative z-10 transition-opacity duration-300"
+                    onLoad={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      img.style.opacity = '1';
+                    }}
+                    style={{ opacity: '0' }}
                   />
                 </div>
               )}

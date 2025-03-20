@@ -24,8 +24,11 @@ import EditUser from "./pages/gestion/EditUser";
 import AddCourse from "./pages/gestion/AddCourse";
 import ListCourses from "./pages/gestion/ListCourses";
 import { authService } from "./services/auth.service";
-
-const queryClient = new QueryClient();
+import EditCourse from "./pages/gestion/EditCourse";
+import AssignCourses from "./pages/gestion/AssignCourses";
+import { queryClient } from "@/lib/react-query";
+import Compras from "./pages/gestion/Compras";
+import ConfiguracionReportes from "./pages/gestion/ConfiguracionReportes";
 
 const App = () => {
   useEffect(() => {
@@ -38,32 +41,203 @@ const App = () => {
     };
   }, []);
 
+  // Función para verificar si la ruta es pública
+  const isPublicRoute = (path: string) => {
+    return path === '/' || path === '/login';
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <BrowserRouter>
           <MainLayout>
             <Routes>
-              <Route path="/" element={authService.isAuthenticated() ? <Navigate to="/dashboard" /> : <Index />} />
-              <Route path="/login" element={authService.isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} />
-              <Route path="/dashboard" element={authService.isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} />
-              <Route path="/topics" element={authService.isAuthenticated() ? <Topics /> : <Navigate to="/login" />} />
-              <Route path="/course/:id" element={authService.isAuthenticated() ? <CourseDetail /> : <Navigate to="/login" />} />
-              <Route path="/topics/:categoryId" element={authService.isAuthenticated() ? <CategoryCourses /> : <Navigate to="/login" />} />
-              <Route path="/topics/:categoryId/course/:courseId" element={authService.isAuthenticated() ? <CourseDetails /> : <Navigate to="/login" />} />
-              <Route path="/payments" element={authService.isAuthenticated() ? <Payments /> : <Navigate to="/login" />} />
-              <Route path="/profile" element={authService.isAuthenticated() ? <Profile /> : <Navigate to="/login" />} />
-              <Route path="/mobile/notifications" element={authService.isAuthenticated() ? <NotificationsMobile /> : <Navigate to="/login" />} />
-              <Route path="/gestion" element={authService.isAuthenticated() ? <Gestion /> : <Navigate to="/login" />} />
-              <Route path="/gestion/categoria/nueva" element={authService.isAuthenticated() ? <AddCategory /> : <Navigate to="/login" />} />
-              <Route path="/gestion/categorias" element={authService.isAuthenticated() ? <ListCategories /> : <Navigate to="/login" />} />
-              <Route path="/gestion/categoria/editar/:categoryId" element={authService.isAuthenticated() ? <EditCategory /> : <Navigate to="/login" />} />
-              <Route path="/gestion/curso/nuevo" element={authService.isAuthenticated() ? <AddCourse /> : <Navigate to="/login" />} />
-              <Route path="/gestion/cursos" element={authService.isAuthenticated() ? <ListCourses /> : <Navigate to="/login" />} />
-              <Route path="/gestion/usuario/nuevo" element={authService.isAuthenticated() ? <AddUser /> : <Navigate to="/login" />} />
-              <Route path="/gestion/usuarios" element={authService.isAuthenticated() ? <ManageUsers /> : <Navigate to="/login" />} />
-              <Route path="/gestion/usuarios/gestionar" element={authService.isAuthenticated() ? <ManageUsers /> : <Navigate to="/login" />} />
-              <Route path="/gestion/usuario/editar/:userId" element={authService.isAuthenticated() ? <EditUser /> : <Navigate to="/login" />} />
+              <Route 
+                path="/" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Navigate to="/dashboard" /> : 
+                    <Index />
+                } 
+              />
+              <Route 
+                path="/login" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Navigate to="/dashboard" /> : 
+                    <Login />
+                } 
+              />
+              {/* Rutas protegidas */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Dashboard /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/topics" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Topics /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/course/:id" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <CourseDetail /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/topics/:categoryId" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <CategoryCourses /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/payments" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Payments /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/profile" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Profile /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/mobile/notifications" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <NotificationsMobile /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Gestion /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/categoria/nueva" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <AddCategory /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/categorias" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <ListCategories /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/categoria/editar/:categoryId" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <EditCategory /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/curso/nuevo" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <AddCourse /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/cursos" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <ListCourses /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/curso/editar/:courseId" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <EditCourse /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/usuario/nuevo" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <AddUser /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/usuarios" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <ManageUsers /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/usuarios/gestionar" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <ManageUsers /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/usuario/editar/:userId" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <EditUser /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/compras" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <Compras /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/compras/asignar" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <AssignCourses /> : 
+                    <Navigate to="/login" />
+                } 
+              />
+              <Route 
+                path="/gestion/configuracion-reportes" 
+                element={
+                  authService.isAuthenticated() ? 
+                    <ConfiguracionReportes /> : 
+                    <Navigate to="/login" />
+                  } 
+               />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </MainLayout>

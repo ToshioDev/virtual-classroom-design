@@ -11,10 +11,12 @@ import { authService } from "@/services/auth.service";
 
 const Navbar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     const user = authService.getUser();
     setIsAdmin(user?.rol === 'admin');
+    setUserRole(user?.rol);
   }, []);
 
   return (
@@ -37,11 +39,13 @@ const Navbar = () => {
                 <BookOpenIcon className="h-5 w-5 mr-2" /> Materias
               </Link>
             </Button>
-            <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
-              <Link to="/payments">
-                <CreditCardIcon className="h-5 w-5 mr-2" /> Pagos
-              </Link>
-            </Button>
+            {(userRole === "student" || userRole === "teacher") && (
+              <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
+                <Link to="/payments">
+                  <CreditCardIcon className="h-5 w-5 mr-2" /> Pagos
+                </Link>
+              </Button>
+            )}
             {isAdmin && (
               <Button asChild variant="outline" className="transition duration-300 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-700">
                 <Link to="/gestion">

@@ -26,12 +26,13 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Trash2, Edit, Plus } from 'lucide-react';
+import { Trash2, Edit, Plus, BookOpen, DollarSign, Clock, BarChart3, Folder, FileText, Users } from 'lucide-react';
 import { courseService } from '@/services/course.service';
 import { categoryService } from '@/services/category.service';
 import { Course } from '@/interfaces/course.interface';
 import { Category } from '@/interfaces/category.interface';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 
 const ListCourses: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -47,12 +48,38 @@ const ListCourses: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [fetchedCourses, fetchedCategories] = await Promise.all([
+        const [coursesResponse, categoriesResponse] = await Promise.all([
           courseService.findAll(),
           categoryService.findAll()
         ]);
-        setCourses(fetchedCourses);
-        setCategories(fetchedCategories);
+
+        if (coursesResponse && coursesResponse.data && Array.isArray(coursesResponse.data)) {
+          const coursesData = coursesResponse.data.map(item => ({
+            _id: item._id,
+            nombre: item.nombre,
+            descripion: item.descripion,
+            difficulty: item.difficulty,
+            price: item.price,
+            duration: item.duration,
+            categoryId: item.categoryId,
+            imageUrl: item.imageUrl,
+            docenteId: item.docenteId,
+            videos: item.videos,
+            rating: item.rating
+          }));
+          setCourses(coursesData);
+        }
+
+        if (categoriesResponse && categoriesResponse.data && Array.isArray(categoriesResponse.data)) {
+          const categoriesData = categoriesResponse.data.map(item => ({
+            _id: item._id,
+            nombre: item.nombre,
+            description: item.description,
+            imagen_referencia: item.imagen_referencia,
+            cursosId: item.cursosId
+          }));
+          setCategories(categoriesData);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Error al cargar cursos y categorías', {
@@ -70,7 +97,7 @@ const ListCourses: React.FC = () => {
   const filteredCourses = courses.filter(course => 
     (course.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
      course.descripion.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (filterCategory ? course.categoryId === filterCategory : true)
+    (filterCategory === 'all' || filterCategory === '' ? true : course.categoryId === filterCategory)
   );
 
   // Handle course deletion
@@ -145,7 +172,7 @@ const ListCourses: React.FC = () => {
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas las Categorías</SelectItem>
+            <SelectItem value="all">Todas las Categorías</SelectItem>
             {categories.map(category => (
               <SelectItem key={category._id} value={category._id}>
                 {category.nombre}
@@ -165,52 +192,87 @@ const ListCourses: React.FC = () => {
           </CardHeader>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map(course => (
-            <Card key={course._id} className="hover:shadow-lg transition-shadow duration-300">
-              {course.imageUrl && (
-                <div className="w-full h-48 overflow-hidden">
-                  <img 
-                    src={course.imageUrl} 
-                    alt={course.nombre} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle>{course.nombre}</CardTitle>
-                <CardDescription>{course.descripion}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="font-semibold">Dificultad:</span> {course.difficulty}
+            <Card 
+              key={course._id} 
+              className="overflow-hidden group hover:shadow-xl transition-all duration-300 bg-card border-border"
+            >
+              <div className="relative">
+                <img
+                  src={course.imageUrl || '/placeholder-course.jpg'}
+                  alt={course.nombre}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
+              </div>
+              
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold line-clamp-2 flex items-center gap-2 h-[3.5rem]">
+                    <BookOpen className="w-5 h-5 text-primary shrink-0" />
+                    {course.nombre}
+                  </h3>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Badge 
+                      variant="secondary" 
+                      className={`flex items-center gap-2 ${
+                        course.difficulty === 'Principiante' ? 'bg-emerald-100 text-emerald-700' :
+                        course.difficulty === 'Intermedio' ? 'bg-blue-100 text-blue-700' :
+                        'bg-purple-100 text-purple-700'
+                      }`}
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      {course.difficulty}
+                    </Badge>
+                    <Badge variant="secondary" className="flex items-center gap-2 bg-green-100 text-green-700">
+                      <DollarSign className="w-4 h-4" />
+                      ${course.price}
+                    </Badge>
+                    <Badge variant="secondary" className="flex items-center gap-2 bg-blue-100 text-blue-700">
+                      <Clock className="w-4 h-4" />
+                      {course.duration}
+                    </Badge>
+                    <Badge variant="secondary" className="flex items-center gap-2 bg-amber-100 text-amber-700">
+                      <Folder className="w-4 h-4" />
+                      {categories.find(cat => cat._id === course.categoryId)?.nombre || 'Sin categoría'}
+                    </Badge>
                   </div>
-                  <div>
-                    <span className="font-semibold">Precio:</span> ${course.price.toFixed(2)}
+
+                  <div className="flex items-start gap-2 text-muted-foreground">
+                    <FileText className="w-4 h-4 mt-1 shrink-0" />
+                    <p className="text-sm line-clamp-2 h-[2.5rem]">
+                      {course.descripion}
+                    </p>
                   </div>
-                  <div>
-                    <span className="font-semibold">Categoría:</span>{' '}
-                    {categories.find(cat => cat._id === course.categoryId)?.nombre || 'Sin categoría'}
+
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Users className="w-4 h-4" />
+                      <span className="text-sm">
+                        {course.docenteId?.length || 0} Docentes
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => navigate(`/gestion/curso/editar/${course._id}`)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => openDeleteDialog(course)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={() => navigate(`/gestion/curso/editar/${course._id}`)}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  size="icon"
-                  onClick={() => openDeleteDialog(course)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>

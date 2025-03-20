@@ -47,7 +47,6 @@ export default function StudentPayments() {
       const userId = user ? user._id : "";
 
       const fetchedPayments = await paymentService.findAll();
-      console.log("Pagos obtenidos:", fetchedPayments);
 
       const userPayments = fetchedPayments.data.filter(payment => payment.estudianteId === userId);
       setPayments(userPayments);

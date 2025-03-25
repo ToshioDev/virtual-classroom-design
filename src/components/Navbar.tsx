@@ -25,7 +25,11 @@ const Navbar = () => {
         <div className="relative flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
             <Link to="/" className="text-xl font-bold text-gray-900 dark:text-white">
-              NOVA
+              <img
+                src="/logo.svg"
+                alt="Nova Logo"
+                className="h-10 w-auto dark:brightness-100 brightness-0" // negro en claro, blanco en oscuro
+              />
             </Link>
           </div>
           <div className="flex-1 flex items-center justify-center space-x-4">

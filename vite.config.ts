@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  base: "/", // Replace this with the subdirectory path if needed
   plugins: [
     react(),
     mode === 'development' &&
